@@ -1,0 +1,33 @@
+<aura:component description="DisplayPhotos" controller="DisplayPhotosController">
+    <aura:attribute type="List" name="photos"/>
+    <aura:handler name="init" action="{!c.init}" value="{!this}"/>
+    <aura:attribute name="searchText" type="String" default=""/>
+    <aura:attribute name="showSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="showModal" type="Boolean" default="false"/>
+    <aura:attribute name="photosIsNotEmpty" type="Boolean" default="false"/>
+    <aura:handler name="ModalActionEvent" event="c:LEV_Modal" action="{!c.hideModal}"/>
+    <lightning:layout class ="slds-wrap">
+    <aura:if isTrue="{!v.showSpinner }">
+        <lightning:spinner alternativeText="Loading" />
+    </aura:if>
+        <lightning:layoutItem class="slds-size--1-of-1">
+            <div class="slds-input-has-icon slds-input-has-icon--right">
+                <lightning:buttonIcon iconName="utility:search" variant="bare" onclick="{! c.searchClick }" alternativeText="Search" class="slds-input__icon" />
+                <ui:inputText value="{!v.searchText}" class="slds-lookup__search-input slds-input" placeholder="Search" />
+            </div>
+        </lightning:layoutItem>
+
+    <aura:iteration items="{!v.photos}" var="photo">
+        <lightning:layoutItem class="slds-size--1-of-2">
+        <img src="{!photo.url__c}"/><br/>
+        {!photo.title__c}
+        </lightning:layoutItem>
+    </aura:iteration>
+        <lightning:layoutItem class="slds-size--1-of-1">
+            <lightning:button class="slds-align_absolute-center" label="Send images by mail" onclick="{!c.openModalToSend}" disabled="{!v.photosIsNotEmpty}"/>
+        </lightning:layoutItem>
+        <aura:if isTrue="{!v.showModal}">
+                <c:MailModal imagesToSend = "{!v.photos}" isVisible="{!v.showModal}" />
+        </aura:if>
+    </lightning:layout>
+</aura:component>
